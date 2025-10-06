@@ -1,0 +1,70 @@
+{% set name = "typing_extensions" %}
+{% set version = "4.11.0" %}
+
+package:
+  name: {{ name|lower }}
+  version: {{ version }}
+
+source:
+  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/typing_extensions-{{ version }}.tar.gz
+  sha256: 83f085bd5ca59c80295fc2a82ab5dac679cbe02b9f33f7d83af68e241bea51b0
+
+build:
+  number: 0
+  skip: true  # [py<38]
+
+outputs:
+  - name: {{ name }}
+    build:
+      script: python -m pip install --no-deps --no-build-isolation --ignore-installed .
+
+    requirements:
+      host:
+        - python
+        - flit-core >=3.4,<4
+        - pip
+      run:
+        - python
+
+    test:
+      imports:
+        - typing_extensions
+
+  - name: typing-extensions
+    build:
+    requirements:
+      host:
+        - python
+      run:
+        - python
+        - {{ pin_subpackage(name, exact=True) }}
+    test:
+      imports:
+        - typing_extensions
+      requires:
+        - pip
+      commands:
+        - pip check
+
+about:
+  home: https://github.com/python/typing_extensions
+  license: PSF-2.0
+  license_family: PSF
+  license_file: LICENSE
+  summary: Backported and Experimental Type Hints for Python
+  description: |
+    The typing module was added to the standard library in Python 3.5, but
+    many new features have been added to the module since then.
+    This means users of older Python versions who are unable to upgrade will not be
+    able to take advantage of new types added to the typing module, such as
+    typing.Protocol or typing.TypedDict.
+
+    The typing_extensions module contains backports of these changes.
+    Experimental types that will eventually be added to the ``typing``
+    module are also included in typing_extensions.
+
+  doc_url: https://github.com/python/typing_extensions/blob/main/README.md
+  dev_url: https://github.com/python/typing_extensions
+extra:
+  recipe-maintainers:
+    - cbouss
